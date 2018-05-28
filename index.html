@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+  <script src="http://pv.sohu.com/cityjson"></script>
+  <title>About Device</title>
+</head>
+
+<body>
+  <div id="app">
+    <h2>位置信息</h2>
+    <ul>
+      <li>IP: {{location.cip}}</li>
+      <li>地区代码: {{location.cid}}</li>
+      <li>所在地: {{location.cname}}</li>
+      <li>纬度: {{latitude}}</li>
+      <li>经度: {{longitude}}</li>
+    </ul>
+    <h2>浏览器信息</h2>
+    <ul>
+      <li>userAgent: {{navigator.userAgent}}</li>
+      <li>appName: {{navigator.appName}}</li>
+      <li>appCodeName: {{navigator.appCodeName}}</li>
+      <li>appVersion: {{navigator.appVersion}}</li>
+      <li>appMinorVersion: {{navigator.appMinorVersion}}</li>
+      <li>platform: {{navigator.platform}}</li>
+      <li>cookieEnabled: {{navigator.cookieEnabled}}</li>
+      <li>onLine: {{navigator.onLine}}</li>
+      <li>language: {{navigator.language}}</li>
+      <li v-for="(item,index) in navigator.mimeTypes" :key="item.type">{{item.type}}: {{item.description}}</li>
+    </ul>
+    <h2>硬件信息</h2>
+    <ul>
+      <li>GPU: {{gpu}}</li>
+    </ul>
+    <h2>屏幕信息</h2>
+    <ul>
+      <li>网页可见区域宽: {{body.clientWidth}}</li>
+      <li>网页可见区域高: {{body.clientHeight}}</li>
+      <li>网页可见区域宽(包括边线和滚动条的宽): {{body.offsetWidth}}</li>
+      <li>网页可见区域高(包括边线的宽): {{body.offsetHeight}}</li>
+      <li>网页正文全文宽: {{body.scrollWidth}}</li>
+      <li>网页正文全文高: {{body.scrollHeight}}</li>
+      <li>网页被卷去的高: {{body.scrollTop}}</li>
+      <li>网页被卷去的左: {{body.scrollLeft}}</li>
+      <li>网页正文部分上: {{screenTop}}</li>
+      <li>网页正文部分左: {{screenLeft}}</li>
+      <li>屏幕物理分辨率的宽: {{screen.width}}</li>
+      <li>屏幕物理分辨率的高: {{screen.height}}</li>
+      <li>屏幕可用工作区宽度: {{screen.availWidth}}</li>
+      <li>屏幕可用工作区高度: {{screen.availHeight}}</li>
+      <li>屏幕缩放因子: {{devicePixelRatio}}</li>
+      <li>屏幕逻辑分辨率: {{screen.width*devicePixelRatio}}*{{screen.height*devicePixelRatio}}</li>
+    </ul>
+  </div>
+  <script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+          latitude: '',
+          longitude: '',
+          location: returnCitySN,
+          navigator,
+          body: document.body,
+          screen: screen,
+          screenTop,
+          screenLeft,
+          devicePixelRatio,
+          gpu: ''
+        },
+        created() {
+          let canvas = document.createElement('canvas')
+          let gl = canvas.getContext('experimental-webgl')
+          let debugInfo = gl.getExtension('WEBGL_debug_renderer_info')
+          this.gpu = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL)
+
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(position => {
+              this.latitude = position.coords.latitude
+              this.longitude = position.coords.longitude
+            })
+          }
+        }
+      })
+  </script>
+</body>
+
+</html>
